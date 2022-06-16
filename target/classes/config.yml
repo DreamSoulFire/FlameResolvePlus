@@ -1,0 +1,64 @@
+#分解职业设置
+#变量
+# %frp_level% 等级
+# %frp_nextlevel% 下一级
+# %frp_exp% 经验
+# %frp_maxexp% 当前等级的最大经验
+# %frp_buff% buff加成
+# %frp_prefix% 玩家称号
+Resolver:
+  #等级 可通过
+  # %frp_level%
+  #获取
+  #0级必须有
+  '0':
+    #需要的经验 可通过
+    # %frp_exp%
+    #获取
+    Exp: 0
+    #提供的分解几率加成 可通过
+    # %frp_buff%
+    #获取
+    Buff: 0
+    #称号[可以使用颜色字符] 可通过
+    # %frp_prefix%
+    #获取
+    Prefix: '见习分解师'
+  '1':
+    Exp: 20
+    Buff: 1
+    Prefix: '初级分解师'
+  '2':
+    Exp: 40
+    Buff: 2
+    Prefix: '中级分解师'
+  '3':
+    Exp: 80
+    Buff: 3
+    Prefix: '高级分解师'
+
+#特殊权限设置
+Permission:
+  #是否启用 [true 是|false 否]
+  Enable: false
+  List:
+    - 'flameresolveplus.permission.vip1<->5'
+
+#消息设置
+Message:
+  #打开界面发送消息
+  OpenMsg:
+    #是否启用 [true 是|false 否]
+    Enable: false
+  #关闭界面发送消息
+  CloseMsg:
+    Enable: false
+  #分解物品发送消息
+  ResolveMsg:
+    Enable: true
+  #不通过条件检测发送消息
+  CantPassConditionMsg:
+    Enable: true
+  #玩家货币不满足时发送的消息
+  CantTakeMsg:
+    Enable: true

@@ -1,0 +1,11 @@
+name: FlameResolvePlus
+version: '1.1.5'
+main: dream.soulflame.flameresolveplus.FlameResolvePlus
+authors: [ SoulFlame ]
+depend:
+  - FlameCore
+  - PlaceholderAPI
+commands:
+  flameresolveplus:
+    aliases:
+      - frp

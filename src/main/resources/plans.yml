@@ -1,0 +1,39 @@
+#分解物品设置
+#可无限增加 不重复即可
+#例子
+Example:
+  #检测的条件
+  #不通过就无法分解物品
+  #不需要可以直接删掉
+  Condition:
+    - 'papi<->%player_level%>=1'
+    - 'perm<->flameresolveplus.use.example'
+  #需要消耗的货币
+  #两种
+  # money 金币 [需要Vault与经济插件]
+  # points 点券 [需要PlayerPoints插件]
+  #不需要可以直接删掉
+  Take: 'money<->500'
+  #检测 两种模式
+  #lore/name [都不需要带颜色字符]
+  Check: 'name<->结晶'
+  #分解几率 百分比
+  #如果物品数量大于一
+  #则是每个物品的分解几率
+  Chance: 60.0
+  #分解之后增加的经验
+  #只能是整数
+  #只要分解了物品 无论成功还是失败
+  #都会增加
+  #或者你可以直接在下面的commands和
+  #failcomands里用指令增加
+  Exp: 1
+  #分解成功后执行的指令
+  # [op] 以op身份执行
+  # [console] 以控制台身份执行
+  # [player] 以玩家身份执行
+  Commands:
+    - '[op]heal <player>'
+  #失败执行指令
+  FailCommands:
+    - '[op]bc <player> 分解失败了, 大家快来嘲笑他'
