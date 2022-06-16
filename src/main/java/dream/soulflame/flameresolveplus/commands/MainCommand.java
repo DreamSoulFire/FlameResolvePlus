@@ -1,5 +1,6 @@
 package dream.soulflame.flameresolveplus.commands;
 
+import dream.soulflame.flamecore.utils.SendUtil;
 import dream.soulflame.flameresolveplus.FlameResolvePlus;
 import dream.soulflame.flameresolveplus.fileloader.*;
 import dream.soulflame.flameresolveplus.inventories.ResolveInv;
@@ -17,6 +18,7 @@ import static dream.soulflame.flamecore.utils.SendUtil.reColor;
 import static dream.soulflame.flamecore.utils.SendUtil.reName;
 import static dream.soulflame.flamecore.utils.SpecialUtil.actions;
 import static dream.soulflame.flameresolveplus.fileloader.LangLoader.*;
+import static dream.soulflame.flameresolveplus.fileloader.PlayerDataLoader.*;
 import static org.bukkit.Bukkit.getConsoleSender;
 
 public class MainCommand implements TabExecutor {
@@ -134,11 +136,45 @@ public class MainCommand implements TabExecutor {
             if ("info".equalsIgnoreCase(args[0])) {
                 if (sender instanceof Player) {
                     Player player = (Player) sender;
-                    if (player.hasPermission("flameresolveplus.command.info"))
-                        PlayerDataLoader.showInfo(args[1]);
+                    if (player.hasPermission("flameresolveplus.command.info")) {
+                        String prefix = getPrefix(args[1]);
+                        int level = getLevel(args[1]);
+                        int nextLevel = getNextLevel(args[1]);
+                        int exp = getExp(args[1]);
+                        int maxExp = getMaxExp(args[1]);
+                        int buff = getBuff(args[1]);
+                        for (String msg : LangLoader.getLangFile().getStringList("Resolver.Info"))
+                            SendUtil.message(player, msg
+                                    .replace("<player>", args[1])
+                                    .replace("<prefix>", prefix)
+                                    .replace("<level>", String.valueOf(level))
+                                    .replace("<nextlevel>", String.valueOf(nextLevel))
+                                    .replace("<exp>", String.valueOf(exp))
+                                    .replace("<maxexp>", String.valueOf(maxExp))
+                                    .replace("<buff>", String.valueOf(buff)),
+                                    0
+                            );
+                    }
                     else for (String noPer : noPermission) actions(player, noPer);
                     return true;
-                } else PlayerDataLoader.showInfo(args[1]);
+                } else {
+                    String prefix = getPrefix(args[1]);
+                    int level = getLevel(args[1]);
+                    int nextLevel = getNextLevel(args[1]);
+                    int exp = getExp(args[1]);
+                    int maxExp = getMaxExp(args[1]);
+                    int buff = getBuff(args[1]);
+                    for (String msg : LangLoader.getLangFile().getStringList("Resolver.Info"))
+                        SendUtil.message(msg
+                                .replace("<player>", args[1])
+                                .replace("<prefix>", prefix)
+                                .replace("<level>", String.valueOf(level))
+                                .replace("<nextlevel>", String.valueOf(nextLevel))
+                                .replace("<exp>", String.valueOf(exp))
+                                .replace("<maxexp>", String.valueOf(maxExp))
+                                .replace("<buff>", String.valueOf(buff))
+                        );
+                }
                 return true;
             }
 
@@ -149,19 +185,37 @@ public class MainCommand implements TabExecutor {
                         Player player = (Player) sender;
                         String name = player.getName();
                         if (player.hasPermission("flameresolveplus.command.level")) {
-                            if ("add".equalsIgnoreCase(args[1])) PlayerDataLoader.addLevel(name, args[2]);
-                            else if ("set".equalsIgnoreCase(args[1])) PlayerDataLoader.setLevel(name, args[2]);
-                            else if ("del".equalsIgnoreCase(args[1])) PlayerDataLoader.delLevel(name, args[2]);
-                            else for (String noArgs : argsNoEnough) actions(player, noArgs);
+                            if ("add".equalsIgnoreCase(args[1])) {
+                                PlayerDataLoader.addLevel(name, args[2]);
+                                for (String msg : LangLoader.add)
+                                    SendUtil.message(player, reName(player, msg).replace("<value>", args[2]), 0);
+                            } else if ("set".equalsIgnoreCase(args[1])) {
+                                PlayerDataLoader.setLevel(name, args[2]);
+                                for (String msg : LangLoader.set)
+                                    SendUtil.message(player, reName(player, msg).replace("<value>", args[2]), 0);
+                            } else if ("del".equalsIgnoreCase(args[1])) {
+                                PlayerDataLoader.delLevel(name, args[2]);
+                                for (String msg : LangLoader.del)
+                                    SendUtil.message(player, reName(player, msg).replace("<value>", args[2]), 0);
+                            } else for (String noArgs : argsNoEnough) actions(player, noArgs);
                         }
                         else for (String noPer : noPermission) actions(player, noPer);
                         return true;
                     } else {
                         String name = sender.getName();
-                        if ("add".equalsIgnoreCase(args[1])) PlayerDataLoader.addLevel(name, args[2]);
-                        else if ("set".equalsIgnoreCase(args[1])) PlayerDataLoader.setLevel(name, args[2]);
-                        else if ("del".equalsIgnoreCase(args[1])) PlayerDataLoader.delLevel(name, args[2]);
-                        else for (String noArgs : argsNoEnough) actions(sender, noArgs);
+                        if ("add".equalsIgnoreCase(args[1])) {
+                            PlayerDataLoader.addLevel(name, args[2]);
+                            for (String msg : LangLoader.add)
+                                SendUtil.message(msg.replace("<player>", name).replace("<value>", args[2]));
+                        } else if ("set".equalsIgnoreCase(args[1])) {
+                            PlayerDataLoader.setLevel(name, args[2]);
+                            for (String msg : LangLoader.set)
+                                SendUtil.message(msg.replace("<player>", name).replace("<value>", args[2]));
+                        } else if ("del".equalsIgnoreCase(args[1])) {
+                            PlayerDataLoader.delLevel(name, args[2]);
+                            for (String msg : LangLoader.del)
+                                SendUtil.message(msg.replace("<player>", name).replace("<value>", args[2]));
+                        } else for (String noArgs : argsNoEnough) actions(sender, noArgs);
                     }
                     return true;
                 }
@@ -172,19 +226,37 @@ public class MainCommand implements TabExecutor {
                         Player player = (Player) sender;
                         String name = player.getName();
                         if (player.hasPermission("flameresolveplus.command.exp")) {
-                            if ("add".equalsIgnoreCase(args[1])) PlayerDataLoader.addExp(name, args[2]);
-                            else if ("set".equalsIgnoreCase(args[1])) PlayerDataLoader.setExp(name, args[2]);
-                            else if ("del".equalsIgnoreCase(args[1])) PlayerDataLoader.delExp(name, args[2]);
-                            else for (String noArgs : argsNoEnough) actions(player, noArgs);
+                            if ("add".equalsIgnoreCase(args[1])) {
+                                PlayerDataLoader.addExp(name, args[2]);
+                                for (String msg : LangLoader.add)
+                                    SendUtil.message(player, reName(player, msg).replace("<value>", args[2]), 0);
+                            } else if ("set".equalsIgnoreCase(args[1])) {
+                                PlayerDataLoader.setExp(name, args[2]);
+                                for (String msg : LangLoader.set)
+                                    SendUtil.message(player, reName(player, msg).replace("<value>", args[2]), 0);
+                            } else if ("del".equalsIgnoreCase(args[1])) {
+                                PlayerDataLoader.delExp(name, args[2]);
+                                for (String msg : LangLoader.del)
+                                    SendUtil.message(player, reName(player, msg).replace("<value>", args[2]), 0);
+                            } else for (String noArgs : argsNoEnough) actions(player, noArgs);
                         }
                         else for (String noPer : noPermission) actions(player, noPer);
                         return true;
                     } else {
                         String name = sender.getName();
-                        if ("add".equalsIgnoreCase(args[1])) PlayerDataLoader.addExp(name, args[2]);
-                        else if ("set".equalsIgnoreCase(args[1])) PlayerDataLoader.setExp(name, args[2]);
-                        else if ("del".equalsIgnoreCase(args[1])) PlayerDataLoader.delExp(name, args[2]);
-                        else for (String noArgs : argsNoEnough) actions(sender, noArgs);
+                        if ("add".equalsIgnoreCase(args[1])) {
+                            PlayerDataLoader.addExp(name, args[2]);
+                            for (String msg : LangLoader.add)
+                                SendUtil.message(msg.replace("<player>", name).replace("<value>", args[2]));
+                        } else if ("set".equalsIgnoreCase(args[1])) {
+                            PlayerDataLoader.setExp(name, args[2]);
+                            for (String msg : LangLoader.set)
+                                SendUtil.message(msg.replace("<player>", name).replace("<value>", args[2]));
+                        } else if ("del".equalsIgnoreCase(args[1])) {
+                            PlayerDataLoader.delExp(name, args[2]);
+                            for (String msg : LangLoader.del)
+                                SendUtil.message(msg.replace("<player>", name).replace("<value>", args[2]));
+                        } else for (String noArgs : argsNoEnough) actions(sender, noArgs);
                     }
                     return true;
                 }
@@ -196,18 +268,36 @@ public class MainCommand implements TabExecutor {
                     if (sender instanceof Player) {
                         Player player = (Player) sender;
                         if (player.hasPermission("flameresolveplus.command.level")) {
-                            if ("add".equalsIgnoreCase(args[1])) PlayerDataLoader.addLevel(args[3], args[2]);
-                            else if ("set".equalsIgnoreCase(args[1])) PlayerDataLoader.setLevel(args[3], args[2]);
-                            else if ("del".equalsIgnoreCase(args[1])) PlayerDataLoader.delLevel(args[3], args[2]);
-                            else for (String noArgs : argsNoEnough) actions(player, noArgs);
+                            if ("add".equalsIgnoreCase(args[1])) {
+                                PlayerDataLoader.addLevel(args[3], args[2]);
+                                for (String msg : LangLoader.add)
+                                    SendUtil.message(player, reName(player, msg).replace("<value>", args[2]), 0);
+                            } else if ("set".equalsIgnoreCase(args[1])) {
+                                PlayerDataLoader.setLevel(args[3], args[2]);
+                                for (String msg : LangLoader.set)
+                                    SendUtil.message(player, reName(player, msg).replace("<value>", args[2]), 0);
+                            } else if ("del".equalsIgnoreCase(args[1])) {
+                                PlayerDataLoader.delLevel(args[3], args[2]);
+                                for (String msg : LangLoader.del)
+                                    SendUtil.message(player, reName(player, msg).replace("<value>", args[2]), 0);
+                            } else for (String noArgs : argsNoEnough) actions(player, noArgs);
                         }
                         else for (String noPer : noPermission) actions(player, noPer);
                         return true;
                     } else {
-                        if ("add".equalsIgnoreCase(args[1])) PlayerDataLoader.addLevel(args[3], args[2]);
-                        else if ("set".equalsIgnoreCase(args[1])) PlayerDataLoader.setLevel(args[3], args[2]);
-                        else if ("del".equalsIgnoreCase(args[1])) PlayerDataLoader.delLevel(args[3], args[2]);
-                        else for (String noArgs : argsNoEnough) actions(sender, noArgs);
+                        if ("add".equalsIgnoreCase(args[1])) {
+                            PlayerDataLoader.addLevel(args[3], args[2]);
+                            for (String msg : LangLoader.add)
+                                SendUtil.message(msg.replace("<player>", args[3]).replace("<value>", args[2]));
+                        } else if ("set".equalsIgnoreCase(args[1])) {
+                            PlayerDataLoader.setLevel(args[3], args[2]);
+                            for (String msg : LangLoader.set)
+                                SendUtil.message(msg.replace("<player>", args[3]).replace("<value>", args[2]));
+                        } else if ("del".equalsIgnoreCase(args[1])) {
+                            PlayerDataLoader.delLevel(args[3], args[2]);
+                            for (String msg : LangLoader.del)
+                                SendUtil.message(msg.replace("<player>", args[3]).replace("<value>", args[2]));
+                        } else for (String noArgs : argsNoEnough) actions(sender, noArgs);
                     }
                     return true;
                 }
@@ -217,18 +307,36 @@ public class MainCommand implements TabExecutor {
                     if (sender instanceof Player) {
                         Player player = (Player) sender;
                         if (player.hasPermission("flameresolveplus.command.exp")) {
-                            if ("add".equalsIgnoreCase(args[1])) PlayerDataLoader.addExp(args[3], args[2]);
-                            else if ("set".equalsIgnoreCase(args[1])) PlayerDataLoader.setExp(args[3], args[2]);
-                            else if ("del".equalsIgnoreCase(args[1])) PlayerDataLoader.delExp(args[3], args[2]);
-                            else for (String noArgs : argsNoEnough) actions(player, noArgs);
+                            if ("add".equalsIgnoreCase(args[1])) {
+                                PlayerDataLoader.addExp(args[3], args[2]);
+                                for (String msg : LangLoader.add)
+                                    SendUtil.message(player, reName(player, msg).replace("<value>", args[2]), 0);
+                            } else if ("set".equalsIgnoreCase(args[1])) {
+                                PlayerDataLoader.setExp(args[3], args[2]);
+                                for (String msg : LangLoader.set)
+                                    SendUtil.message(player, reName(player, msg).replace("<value>", args[2]), 0);
+                            } else if ("del".equalsIgnoreCase(args[1])) {
+                                PlayerDataLoader.delExp(args[3], args[2]);
+                                for (String msg : LangLoader.del)
+                                    SendUtil.message(player, reName(player, msg).replace("<value>", args[2]), 0);
+                            } else for (String noArgs : argsNoEnough) actions(player, noArgs);
                         }
                         else for (String noPer : noPermission) actions(player, noPer);
                         return true;
                     } else {
-                        if ("add".equalsIgnoreCase(args[1])) PlayerDataLoader.addExp(args[3], args[2]);
-                        else if ("set".equalsIgnoreCase(args[1])) PlayerDataLoader.setExp(args[3], args[2]);
-                        else if ("del".equalsIgnoreCase(args[1])) PlayerDataLoader.delExp(args[3], args[2]);
-                        else for (String noArgs : argsNoEnough) actions(sender, noArgs);
+                        if ("add".equalsIgnoreCase(args[1])) {
+                            PlayerDataLoader.addExp(args[3], args[2]);
+                            for (String msg : LangLoader.add)
+                                SendUtil.message(msg.replace("<player>", args[3]).replace("<value>", args[2]));
+                        } else if ("set".equalsIgnoreCase(args[1])) {
+                            PlayerDataLoader.setExp(args[3], args[2]);
+                            for (String msg : LangLoader.set)
+                                SendUtil.message(msg.replace("<player>", args[3]).replace("<value>", args[2]));
+                        } else if ("del".equalsIgnoreCase(args[1])) {
+                            PlayerDataLoader.delExp(args[3], args[2]);
+                            for (String msg : LangLoader.del)
+                                SendUtil.message(msg.replace("<player>", args[3]).replace("<value>", args[2]));
+                        } else for (String noArgs : argsNoEnough) actions(sender, noArgs);
                     }
                     return true;
                 }

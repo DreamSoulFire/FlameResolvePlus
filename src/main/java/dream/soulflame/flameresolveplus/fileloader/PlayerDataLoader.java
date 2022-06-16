@@ -124,8 +124,6 @@ public class PlayerDataLoader {
         YamlConfiguration playerData = getPlayerData(name);
         level += addLevel;
         levelChange(level, playerData, name);
-        for (String msg : LangLoader.add)
-            SendUtil.message(msg.replace("<player>", name).replace("<value>", arg));
 
     }
 
@@ -143,8 +141,6 @@ public class PlayerDataLoader {
         }
         YamlConfiguration playerData = getPlayerData(name);
         levelChange(newLevel, playerData, name);
-        for (String msg : LangLoader.set)
-            SendUtil.message(msg.replace("<player>", name).replace("<value>", arg));
     }
 
     /**
@@ -162,8 +158,6 @@ public class PlayerDataLoader {
         }
         YamlConfiguration playerData = getPlayerData(name);
         levelChange(level, playerData, name);
-        for (String msg : LangLoader.del)
-            SendUtil.message(msg.replace("<player>", name).replace("<value>", arg));
     }
 
     /**
@@ -219,8 +213,6 @@ public class PlayerDataLoader {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        for (String msg : LangLoader.add)
-            SendUtil.message(msg.replace("<player>", name).replace("<value>", arg));
     }
 
     /**
@@ -251,8 +243,6 @@ public class PlayerDataLoader {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        for (String msg : LangLoader.set)
-            SendUtil.message(msg.replace("<player>", name).replace("<value>", arg));
     }
 
     /**
@@ -275,8 +265,6 @@ public class PlayerDataLoader {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        for (String msg : LangLoader.del)
-            SendUtil.message(msg.replace("<player>", name).replace("<value>", arg));
     }
 
     /**
@@ -304,25 +292,6 @@ public class PlayerDataLoader {
      */
     public static String getPrefix(String name) {
         return getPlayerData(name).getString("Prefix", "");
-    }
-
-    public static void showInfo(String name) {
-        String prefix = getPrefix(name);
-        int level = getLevel(name);
-        int nextLevel = getNextLevel(name);
-        int exp = getExp(name);
-        int maxExp = getMaxExp(name);
-        int buff = getBuff(name);
-        for (String msg : LangLoader.getLangFile().getStringList("Resolver.Info"))
-            SendUtil.message(msg
-                .replace("<player>", name)
-                .replace("<prefix>", prefix)
-                .replace("<level>", String.valueOf(level))
-                .replace("<nextlevel>", String.valueOf(nextLevel))
-                .replace("<exp>", String.valueOf(exp))
-                .replace("<maxexp>", String.valueOf(maxExp))
-                .replace("<buff>", String.valueOf(buff))
-            );
     }
 
 }
