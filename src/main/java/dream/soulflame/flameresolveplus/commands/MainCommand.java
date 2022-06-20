@@ -144,16 +144,14 @@ public class MainCommand implements TabExecutor {
                         int maxExp = getMaxExp(args[1]);
                         int buff = getBuff(args[1]);
                         for (String msg : LangLoader.getLangFile().getStringList("Resolver.Info"))
-                            SendUtil.message(player, msg
+                            player.sendMessage(msg
                                     .replace("<player>", args[1])
                                     .replace("<prefix>", prefix)
                                     .replace("<level>", String.valueOf(level))
                                     .replace("<nextlevel>", String.valueOf(nextLevel))
                                     .replace("<exp>", String.valueOf(exp))
                                     .replace("<maxexp>", String.valueOf(maxExp))
-                                    .replace("<buff>", String.valueOf(buff)),
-                                    0
-                            );
+                                    .replace("<buff>", String.valueOf(buff)));
                     }
                     else for (String noPer : noPermission) actions(player, noPer);
                     return true;
