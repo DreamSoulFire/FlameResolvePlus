@@ -51,7 +51,7 @@ public class MainCommand implements TabExecutor {
             if (sender.hasPermission("flameresolveplus.command.help"))
                 for (String help : getLangFile().getStringList("Command.Help"))
                     sender.sendMessage(reColor(reName(sender, help)));
-            else for (String noPer : noPermission) actions(sender, noPer);
+            else actions(sender, noPermission);
             return true;
         }
 
@@ -60,12 +60,12 @@ public class MainCommand implements TabExecutor {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
                 if (player.hasPermission("flameresolveplus.command.reload")) {
-                    for (String reload : reloadMsg) actions(player, reload);
+                    actions(player, reloadMsg);
                     reloadAll();
-                } else for (String noPer : noPermission) actions(player, noPer);
+                } else actions(sender, noPermission);
                 return true;
             } else {
-                for (String reload : reloadMsg) actions(sender, reload);
+                actions(sender, reloadMsg);
                 reloadAll();
             }
             return true;
@@ -76,7 +76,7 @@ public class MainCommand implements TabExecutor {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
                 if (player.hasPermission("flameresolveplus.open.resolve")) ResolveInv.openInv(player);
-                else for (String noPer : noPermission) actions(player, noPer);
+                else actions(sender, noPermission);
             } else for (String cant : cantConsoleMsg) actions(sender, cant);
         }
 
@@ -87,12 +87,7 @@ public class MainCommand implements TabExecutor {
                     "exp".equalsIgnoreCase(args[0]) ||
                     "clear".equalsIgnoreCase(args[0]) ||
                     "info".equalsIgnoreCase(args[0])) {
-                if (sender instanceof Player) {
-                    Player player = ((Player) sender).getPlayer();
-                    for (String noArgs : argsNoEnough) actions(player, noArgs);
-                    return true;
-                } else for (String noArgs : argsNoEnough)
-                    actions(sender, noArgs);
+                actions(sender, argsNoEnough);
                 return true;
             }
 
@@ -105,18 +100,17 @@ public class MainCommand implements TabExecutor {
                     ItemStack handItem = player.getInventory().getItemInMainHand();
                     MaterialData materialData = handItem.getData();
                     Material itemType = materialData.getItemType();
-                    if (itemType == Material.AIR) for (String checkNoItemMsg : getLangFile().getStringList("CheckItem.NoItem")) actions(player, checkNoItemMsg);
+                    if (itemType == Material.AIR) actions(player, getLangFile().getStringList("CheckItem.NoItem"));
                     if (player.hasPermission("flameresolveplus.command.check")) {
                         if ("material".equalsIgnoreCase(args[1])) for (String materialMsg : getLangFile().getStringList("CheckItem.Material"))
                             actions(player, materialMsg.replace("<material>", itemType.name()) + ":" + materialData.getData());
                         else if ("id".equalsIgnoreCase(args[1])) for (String idMsg : getLangFile().getStringList("CheckItem.Id"))
                             actions(player, idMsg.replace("<id>", String.valueOf(itemType.getId())) + ":" + materialData.getData());
-                        else for (String noArgs : argsNoEnough)
-                            actions(player, noArgs);
+                        else actions(sender, argsNoEnough);
                     }
-                    else for (String noPer : noPermission) actions(player, noPer);
+                    else actions(sender, noPermission);
                     return true;
-                } else for (String cant : cantConsoleMsg) actions(sender, cant);
+                } else actions(sender, cantConsoleMsg);
                 return true;
             }
 
@@ -126,7 +120,7 @@ public class MainCommand implements TabExecutor {
                     Player player = (Player) sender;
                     if (player.hasPermission("flameresolveplus.command.clear"))
                         PlayerDataLoader.clear(args[1]);
-                    else for (String noPer : noPermission) actions(player, noPer);
+                    else actions(sender, noPermission);
                     return true;
                 } else PlayerDataLoader.clear(args[1]);
                 return true;
@@ -153,7 +147,7 @@ public class MainCommand implements TabExecutor {
                                     .replace("<maxexp>", String.valueOf(maxExp))
                                     .replace("<buff>", String.valueOf(buff)));
                     }
-                    else for (String noPer : noPermission) actions(player, noPer);
+                    else actions(sender, noPermission);
                     return true;
                 } else {
                     String prefix = getPrefix(args[1]);
@@ -195,9 +189,9 @@ public class MainCommand implements TabExecutor {
                                 PlayerDataLoader.delLevel(name, args[2]);
                                 for (String msg : LangLoader.del)
                                     SendUtil.message(player, reName(player, msg).replace("<value>", args[2]), 0);
-                            } else for (String noArgs : argsNoEnough) actions(player, noArgs);
+                            } else actions(sender, argsNoEnough);
                         }
-                        else for (String noPer : noPermission) actions(player, noPer);
+                        else actions(sender, noPermission);
                         return true;
                     } else {
                         String name = sender.getName();
@@ -213,7 +207,7 @@ public class MainCommand implements TabExecutor {
                             PlayerDataLoader.delLevel(name, args[2]);
                             for (String msg : LangLoader.del)
                                 SendUtil.message(msg.replace("<player>", name).replace("<value>", args[2]));
-                        } else for (String noArgs : argsNoEnough) actions(sender, noArgs);
+                        } else actions(sender, argsNoEnough);
                     }
                     return true;
                 }
@@ -236,9 +230,9 @@ public class MainCommand implements TabExecutor {
                                 PlayerDataLoader.delExp(name, args[2]);
                                 for (String msg : LangLoader.del)
                                     SendUtil.message(player, reName(player, msg).replace("<value>", args[2]), 0);
-                            } else for (String noArgs : argsNoEnough) actions(player, noArgs);
+                            } else actions(sender, argsNoEnough);
                         }
-                        else for (String noPer : noPermission) actions(player, noPer);
+                        else actions(sender, noPermission);
                         return true;
                     } else {
                         String name = sender.getName();
@@ -254,7 +248,7 @@ public class MainCommand implements TabExecutor {
                             PlayerDataLoader.delExp(name, args[2]);
                             for (String msg : LangLoader.del)
                                 SendUtil.message(msg.replace("<player>", name).replace("<value>", args[2]));
-                        } else for (String noArgs : argsNoEnough) actions(sender, noArgs);
+                        } else actions(sender, argsNoEnough);
                     }
                     return true;
                 }
@@ -278,9 +272,9 @@ public class MainCommand implements TabExecutor {
                                 PlayerDataLoader.delLevel(args[3], args[2]);
                                 for (String msg : LangLoader.del)
                                     SendUtil.message(player, reName(player, msg).replace("<value>", args[2]), 0);
-                            } else for (String noArgs : argsNoEnough) actions(player, noArgs);
+                            } else actions(sender, argsNoEnough);
                         }
-                        else for (String noPer : noPermission) actions(player, noPer);
+                        else actions(sender, noPermission);
                         return true;
                     } else {
                         if ("add".equalsIgnoreCase(args[1])) {
@@ -295,7 +289,7 @@ public class MainCommand implements TabExecutor {
                             PlayerDataLoader.delLevel(args[3], args[2]);
                             for (String msg : LangLoader.del)
                                 SendUtil.message(msg.replace("<player>", args[3]).replace("<value>", args[2]));
-                        } else for (String noArgs : argsNoEnough) actions(sender, noArgs);
+                        } else actions(sender, argsNoEnough);
                     }
                     return true;
                 }
@@ -317,9 +311,9 @@ public class MainCommand implements TabExecutor {
                                 PlayerDataLoader.delExp(args[3], args[2]);
                                 for (String msg : LangLoader.del)
                                     SendUtil.message(player, reName(player, msg).replace("<value>", args[2]), 0);
-                            } else for (String noArgs : argsNoEnough) actions(player, noArgs);
+                            } else actions(sender, argsNoEnough);
                         }
-                        else for (String noPer : noPermission) actions(player, noPer);
+                        else actions(sender, noPermission);
                         return true;
                     } else {
                         if ("add".equalsIgnoreCase(args[1])) {
@@ -334,7 +328,7 @@ public class MainCommand implements TabExecutor {
                             PlayerDataLoader.delExp(args[3], args[2]);
                             for (String msg : LangLoader.del)
                                 SendUtil.message(msg.replace("<player>", args[3]).replace("<value>", args[2]));
-                        } else for (String noArgs : argsNoEnough) actions(sender, noArgs);
+                        } else actions(sender, argsNoEnough);
                     }
                     return true;
                 }

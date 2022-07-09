@@ -29,8 +29,7 @@ public class OpenAndCloseInv implements Listener {
         if (!player.getType().equals(EntityType.PLAYER)) return;
         if (!inventory.getTitle().equalsIgnoreCase(reColor(guiTitle))) return;
         if (getConfigFile().getBoolean("Message.OpenMsg.Enable", false))
-            for (String open : getLangFile().getStringList("Gui.OpenMsg"))
-                actions(player, open);
+            actions(player, getLangFile().getStringList("Gui.OpenMsg"));
     }
 
     @EventHandler
@@ -42,8 +41,7 @@ public class OpenAndCloseInv implements Listener {
         Player player = (Player) human;
         if (!inventory.getTitle().equalsIgnoreCase(reColor(guiTitle))) return;
         if (getConfigFile().getBoolean("Message.CloseMsg.Enable", false))
-            for (String close : getLangFile().getStringList("Gui.CloseMsg"))
-                actions(player, close);
+            actions(player, getLangFile().getStringList("Gui.CloseMsg"));
         for (int i = 0;i <= inventory.getSize() - 1;i++) {
             ItemStack _item = inventory.getItem(i);
             if (_item == null || _item.getType().equals(Material.AIR)) continue;
@@ -54,7 +52,6 @@ public class OpenAndCloseInv implements Listener {
             have = true;
         }
         if (!have) return;
-        for (String haveItem : getLangFile().getStringList("Gui.HaveItemMsg"))
-            actions(player, haveItem);
+        actions(player, getLangFile().getStringList("Gui.HaveItemMsg"));
     }
 }

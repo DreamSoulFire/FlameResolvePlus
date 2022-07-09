@@ -4,11 +4,8 @@ import dream.soulflame.flamecore.utils.FileUtil;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.Plugin;
 
-import java.util.Set;
-
 public class PlanLoader {
 
-    public static Set<String> resolveItem;
     public static ConfigurationSection items;
 
     private static FileUtil planFile;
@@ -23,7 +20,6 @@ public class PlanLoader {
 
     public static void loadData() {
         items = planFile.getConfigurationSection("");
-        resolveItem = items.getKeys(false);
     }
 
     /**

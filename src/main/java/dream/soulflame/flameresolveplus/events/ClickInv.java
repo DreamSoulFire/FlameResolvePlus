@@ -56,7 +56,7 @@ public class ClickInv implements Listener {
                 if (_itemMeta == null) continue;
                 if (customSet.contains(i) || buttonSet.contains(i)) continue;
                 int _amount = _item.getAmount();
-                for (String keys : resolveItem) {
+                for (String keys : items.getKeys(false)) {
                     ConfigurationSection section = items.getConfigurationSection(keys);
                     String check = section.getString("Check", "");
                     double chance = section.getDouble("Chance", 0.0);
@@ -64,16 +64,14 @@ public class ClickInv implements Listener {
                     String take = section.getString("Take", "");
                     if (!check.contains(splitChar)) {
                         for (String error : configError) actions(player, error);
-                        continue;
+                        return;
                     }
                     if (!checkCondition(player, conditions, splitChar, configError)) {
-                        if (cantPassEnable) for (String cantPass : getLangFile().getStringList("Gui.CantPassConditionMsg"))
-                            actions(player, cantPass);
+                        if (cantPassEnable) actions(player, getLangFile().getStringList("Gui.CantPassConditionMsg"));
                         continue;
                     }
                     if (!takeCurrency(player, take, splitChar, FlameResolvePlus.getPlugin(), configError)) {
-                        if (cantTakeEnable) for (String cantTake : getLangFile().getStringList("Gui.CantTakeMsg"))
-                            actions(player, cantTake);
+                        if (getConfigFile().getBoolean("Message.CantTakeMsg.Enable", false)) actions(player, getLangFile().getStringList("Gui.CantTakeMsg"));
                         continue;
                     }
                     String[] split = check.split(splitChar);
@@ -81,9 +79,13 @@ public class ClickInv implements Listener {
                         for (String perList : getConfigFile().getStringList("Permission.List")) {
                             if (!perList.contains(splitChar)) {
                                 for (String error : configError) actions(player, error);
-                                break;
+                                return;
                             }
                             String[] perSplit = perList.split(splitChar);
+                            if (perSplit.length < 2) {
+                                for (String error : configError) actions(player, error);
+                                return;
+                            }
                             if (!player.hasPermission(perSplit[0])) continue;
                             chance += Double.parseDouble(perSplit[1]);
                         }
@@ -106,20 +108,20 @@ public class ClickInv implements Listener {
                             PlayerDataLoader.addExp(player.getName(), String.valueOf(exp));
                             double randomChance = random.nextDouble();
                             if (chance / 100 < randomChance) {
-                                for (String fail : getLangFile().getStringList("Gui.ResolveFailMsg"))
-                                    actions(player, fail);
-                                for (String failCommands : section.getStringList("FailCommands"))
-                                    commands(player, failCommands);
+                                actions(player, getLangFile().getStringList("Gui.ResolveFailMsg"));
+                                commands(player, section.getStringList("FailCommands"));
                                 continue;
                             }
-                            for (String commands : section.getStringList("Commands"))
-                                commands(player, commands);
+                            commands(player, section.getStringList("Commands"));
                         }
+                        topInventory.setItem(i, new ItemStack(Material.AIR));
                         _item.setAmount(0);
                     }
                     if (getConfigFile().getBoolean("Message.ResolveMsg.Enable", false))
                         for (String resolve : getLangFile().getStringList("Gui.ResolveMsg"))
-                            actions(player, resolve.replace("<item>", _itemMeta.getDisplayName()).replace("<amount>", String.valueOf(_amount)));
+                            actions(player, resolve
+                                    .replace("<item>", _itemMeta.getDisplayName())
+                                    .replace("<amount>", String.valueOf(_amount)));
                 }
             }
         }

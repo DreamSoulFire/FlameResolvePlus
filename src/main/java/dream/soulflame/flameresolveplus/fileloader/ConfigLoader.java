@@ -5,7 +5,6 @@ import org.bukkit.plugin.Plugin;
 
 public class ConfigLoader {
     public static boolean cantPassEnable;
-    public static boolean cantTakeEnable;
 
     private static FileUtil configFile;
 
@@ -26,7 +25,6 @@ public class ConfigLoader {
     }
 
     public static void loadData() {
-        cantTakeEnable = configFile.getBoolean("Message.CantTakeMsg.Enable", false);
         cantPassEnable = configFile.getBoolean("Message.CantPassConditionMsg.Enable", false);
     }
 
