@@ -14,8 +14,7 @@ import org.bukkit.material.MaterialData;
 
 import java.util.List;
 
-import static dream.soulflame.flamecore.utils.SendUtil.reColor;
-import static dream.soulflame.flamecore.utils.SendUtil.reName;
+import static dream.soulflame.flamecore.utils.SendUtil.*;
 import static dream.soulflame.flamecore.utils.SpecialUtil.actions;
 import static dream.soulflame.flameresolveplus.fileloader.LangLoader.*;
 import static dream.soulflame.flameresolveplus.fileloader.PlayerDataLoader.*;
@@ -49,8 +48,7 @@ public class MainCommand implements TabExecutor {
         //help指令
         if (args.length == 0 || "help".equalsIgnoreCase(args[0])) {
             if (sender.hasPermission("flameresolveplus.command.help"))
-                for (String help : getLangFile().getStringList("Command.Help"))
-                    sender.sendMessage(reColor(reName(sender, help)));
+                message(sender, getLangFile().getStringList("Command.Help"));
             else actions(sender, noPermission);
             return true;
         }

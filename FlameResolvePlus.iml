@@ -43,7 +43,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/Desktop/测试服务端/1.12.2/plugins/FlameCore-1.0.7.jar!/" />
+          <root url="jar://$USER_HOME$/Desktop/测试服务端/1.12.2/plugins/FlameCore-1.0.8.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
