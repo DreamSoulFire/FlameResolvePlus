@@ -56,7 +56,7 @@ public class ClickInv implements Listener {
                 if (_itemMeta == null) continue;
                 if (customSet.contains(i) || buttonSet.contains(i)) continue;
                 int _amount = _item.getAmount();
-                for (String keys : items.getKeys(false)) {
+                for (String keys : itemKeys) {
                     ConfigurationSection section = items.getConfigurationSection(keys);
                     String check = section.getString("Check", "");
                     double chance = section.getDouble("Chance", 0.0);
@@ -105,7 +105,7 @@ public class ClickInv implements Listener {
                     if (canResolve) {
                         for (int j = 0; j < _amount; j++) {
                             int exp = section.getInt("Exp", 0);
-                            PlayerDataLoader.addExp(player.getName(), String.valueOf(exp));
+                            PlayerDataLoader.addExp(player, player, String.valueOf(exp));
                             double randomChance = random.nextDouble();
                             if (chance / 100 < randomChance) {
                                 actions(player, getLangFile().getStringList("Gui.ResolveFailMsg"));

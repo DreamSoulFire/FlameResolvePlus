@@ -11,12 +11,12 @@ public class JoinAndQuit implements Listener {
 
     @EventHandler
     public static void join(PlayerJoinEvent e) {
-        getPlayerData(e.getPlayer().getName());
+        getPlayerData(e.getPlayer());
     }
 
     @EventHandler
     public static void leave(PlayerQuitEvent e) {
-        getPlayerData(e.getPlayer().getName());
+        getPlayerData(e.getPlayer());
     }
 
 }

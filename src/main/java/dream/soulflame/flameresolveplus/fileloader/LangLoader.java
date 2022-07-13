@@ -1,7 +1,7 @@
 package dream.soulflame.flameresolveplus.fileloader;
 
 import dream.soulflame.flamecore.utils.FileUtil;
-import org.bukkit.plugin.Plugin;
+import dream.soulflame.flameresolveplus.FlameResolvePlus;
 
 import java.util.List;
 
@@ -29,12 +29,8 @@ public class LangLoader {
         return langFile;
     }
 
-    /**
-     *
-     * @param plugin 所需插件
-     */
-    public static void load(Plugin plugin) {
-        langFile = new FileUtil(plugin, "lang");
+    public static void load() {
+        langFile = new FileUtil(FlameResolvePlus.getPlugin(), "lang");
     }
 
     public static void loadData() {
@@ -53,12 +49,8 @@ public class LangLoader {
         lowTheZero = langFile.getStringList("Resolver.LowTheZero");
     }
 
-    /**
-     *
-     * @param plugin 所需插件
-     */
-    public static void reload(Plugin plugin) {
-        load(plugin);
+    public static void reload() {
+        load();
         loadData();
     }
 }

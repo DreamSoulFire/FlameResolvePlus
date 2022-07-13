@@ -6,7 +6,7 @@
 
     <groupId>dream.soulflame</groupId>
     <artifactId>FlameResolvePlus</artifactId>
-    <version>1.0.4</version>
+    <version>1.2.0</version>
     <packaging>jar</packaging>
 
     <name>FlameResolvePlus</name>

@@ -7,15 +7,15 @@ Command:
     - '&f/flameresolveplus help &a插件主命令'
     - '&f/flameresolveplus open &a打开分解界面'
     - '&f/flameresolveplus check id/material &a查看手持物品的正确id/material'
-    - '&f/flameresolveplus level/exp add/set/del [value] {player} &a为玩家增加/设置/减少多少级/经验'
-    - '&f/flameresolveplus clear [player] &a清除玩家的职业数据'
-    - '&f/flameresolveplus info [player] &a查看玩家的职业数据'
+    - '&f/flameresolveplus level/exp add/set/del [数值] <玩家> &a为玩家增加/设置/减少多少级/经验'
+    - '&f/flameresolveplus clear [玩家] &a清除玩家的职业数据'
+    - '&f/flameresolveplus info [玩家] &a查看玩家的职业数据'
     - '&f/flameresolveplus reload &a重载插件'
     - '&4PS&f:'
     - '&e所有的 &bflameresolveplus &e都可用 &afrp &e来代替'
     - '&e如果 &aPlayerData &e文件夹下&c没有&e此玩家的配置'
     - '&e将会自动创建一个同名的玩家数据文件'
-    - '&7[]&e内的是&b必填&e参数 &7{}&e内的是&a选填&e参数'
+    - '&7[]&e内的是&b必填&e参数 &7<>&e内的是&a选填&e参数'
   #没有权限时发送的消息
   NoPermission:
     - '[message]&c你没有权利这么做'
@@ -68,35 +68,34 @@ Config:
   Error:
     - '[message]&c配置出错,请检查配置文件'
 #职业相关信息
-#[此处无法使用更多信息类型]
 Resolver:
   #创建玩家初始配置
   CreateFile:
-    - '&b正在为 &a<player> &6创建&b新的数据文件'
+    - '[message]&b正在为 &a<player> &6创建&b新的数据文件'
   #增加
   Add:
-    - '&a<player> &b的等级/经验&a增加&b了 &9<value>'
+    - '[message]&a<player> &b的等级/经验&a增加&b了 &9<value>'
   #设置
   Set:
-    - '&a<player> &b的等级/经验&d变成&b了 &9<value>'
+    - '[message]&a<player> &b的等级/经验&d变成&b了 &9<value>'
   #减少
   Del:
-    - '&a<player> &b的等级/经验&c减少&b了 &9<value>'
+    - '[message]&a<player> &b的等级/经验&c减少&b了 &9<value>'
   #大于最大值时发送
   UpTheMax:
-    - '&c等级/经验增加后高于最大值,该操作已取消'
+    - '[message]&c等级/经验增加后高于最大值,该操作已取消'
   #值一致时发送
   Equal:
-    - '&c新的等级/经验与原有的一致,该操作已取消'
+    - '[message]&c新的等级/经验与原有的一致,该操作已取消'
   #小于 0 时发送
   LowTheZero:
-    - '&c等级/经验减少后小于 0 级,该操作已取消'
+    - '[message]&c等级/经验减少后小于 0 级,该操作已取消'
   #清空数据时发送
   Clear:
-    - '&c已经清除 &a<player> &c的所有数据'
-  #显示玩家信息[不支持papi变量]
+    - '[message]&c已经清除 &a<player> &c的所有数据'
+  #显示玩家信息[此处支持papi变量]
   Info:
-    - '<prefix> &b<player>&7: '
-    - '&a当前等级&7: &e<level> &a下一级&7: &e<nextlevel>'
-    - '&a当前经验&7: &e<exp>&7/&e<maxexp>'
-    - '&a当前增幅&7: &e<buff>'
+    - '%frp_prefix% &b%player_name%&7: '
+    - '&a当前等级&7: &e%frp_level% &a下一级&7: &e%frp_nextlevel%'
+    - '&a当前经验&7: &e%frp_exp%&7/&e%frp_maxexp%'
+    - '&a当前增幅&7: &e%frp_buff%'

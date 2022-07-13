@@ -1,9 +1,10 @@
 package dream.soulflame.flameresolveplus.commands;
 
 import dream.soulflame.flamecore.utils.SendUtil;
-import dream.soulflame.flameresolveplus.FlameResolvePlus;
 import dream.soulflame.flameresolveplus.fileloader.*;
 import dream.soulflame.flameresolveplus.inventories.ResolveInv;
+import me.clip.placeholderapi.PlaceholderAPI;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -14,33 +15,31 @@ import org.bukkit.material.MaterialData;
 
 import java.util.List;
 
-import static dream.soulflame.flamecore.utils.SendUtil.*;
+import static dream.soulflame.flamecore.FlameCore.getPlugin;
+import static dream.soulflame.flamecore.utils.SendUtil.message;
 import static dream.soulflame.flamecore.utils.SpecialUtil.actions;
 import static dream.soulflame.flameresolveplus.fileloader.LangLoader.*;
-import static dream.soulflame.flameresolveplus.fileloader.PlayerDataLoader.*;
-import static org.bukkit.Bukkit.getConsoleSender;
 
 public class MainCommand implements TabExecutor {
     private void reloadAll() {
         String prefixMsg = "&cFlame&eResolve&bPlus";
         String splitLine = "&b====================================";
-        FlameResolvePlus plugin = FlameResolvePlus.getPlugin();
         long preTime = System.currentTimeMillis();
         String[] pre = {
                 splitLine,
                 prefixMsg + " &7-> &6插件&e重载&a开始",
                 ""
         };
-        for (String preReload : pre) getConsoleSender().sendMessage(reColor(preReload));
-        ConfigLoader.reload(plugin);
-        GuiLoader.reload(plugin);
-        LangLoader.reload(plugin);
-        PlanLoader.reload(plugin);
+        SendUtil.message(pre);
+        ConfigLoader.reload();
+        GuiLoader.reload();
+        LangLoader.reload();
+        PlanLoader.reload();
         ResolveInv.loadItem();
         long finishTime = System.currentTimeMillis();
         long time = finishTime - preTime;
         String[] finish = {"&6插件&e重载&3完成 &9耗时&f: &a" + time + " &dms", splitLine};
-        for (String finishReload : finish) getConsoleSender().sendMessage(reColor(finishReload));
+        SendUtil.message(finish);
     }
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -116,11 +115,28 @@ public class MainCommand implements TabExecutor {
             if ("clear".equalsIgnoreCase(args[0])) {
                 if (sender instanceof Player) {
                     Player player = (Player) sender;
-                    if (player.hasPermission("flameresolveplus.command.clear"))
-                        PlayerDataLoader.clear(args[1]);
-                    else actions(sender, noPermission);
-                    return true;
-                } else PlayerDataLoader.clear(args[1]);
+                    if (player.hasPermission("flameresolveplus.command.clear")) {
+                        boolean online = false;
+                        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                            String name = onlinePlayer.getName();
+                            if (!args[1].equalsIgnoreCase(name)) continue;
+                            Player target = Bukkit.getPlayer(args[1]);
+                            PlayerDataLoader.clear(target);
+                            online = true;
+                        }
+                        if (!online) actions(player, getPlugin().getConfig().getStringList("Command.PlayerOffline"));
+                    } else actions(player, noPermission);
+                } else {
+                    boolean online = false;
+                    for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                        String name = onlinePlayer.getName();
+                        if (!args[1].equalsIgnoreCase(name)) continue;
+                        Player target = Bukkit.getPlayer(args[1]);
+                        PlayerDataLoader.clear(target);
+                        online = true;
+                    }
+                    if (!online) actions(sender, getPlugin().getConfig().getStringList("Command.PlayerOffline"));
+                }
                 return true;
             }
 
@@ -129,41 +145,32 @@ public class MainCommand implements TabExecutor {
                 if (sender instanceof Player) {
                     Player player = (Player) sender;
                     if (player.hasPermission("flameresolveplus.command.info")) {
-                        String prefix = getPrefix(args[1]);
-                        int level = getLevel(args[1]);
-                        int nextLevel = getNextLevel(args[1]);
-                        int exp = getExp(args[1]);
-                        int maxExp = getMaxExp(args[1]);
-                        int buff = getBuff(args[1]);
-                        for (String msg : LangLoader.getLangFile().getStringList("Resolver.Info"))
-                            player.sendMessage(msg
-                                    .replace("<player>", args[1])
-                                    .replace("<prefix>", prefix)
-                                    .replace("<level>", String.valueOf(level))
-                                    .replace("<nextlevel>", String.valueOf(nextLevel))
-                                    .replace("<exp>", String.valueOf(exp))
-                                    .replace("<maxexp>", String.valueOf(maxExp))
-                                    .replace("<buff>", String.valueOf(buff)));
-                    }
-                    else actions(sender, noPermission);
-                    return true;
+                        boolean online = false;
+                        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                            String name = onlinePlayer.getName();
+                            if (!args[1].equalsIgnoreCase(name)) continue;
+                            Player target = Bukkit.getPlayer(args[1]);
+                            for (String msg : LangLoader.getLangFile().getStringList("Resolver.Info")) {
+                                msg = PlaceholderAPI.setPlaceholders(target, msg);
+                                actions(player, msg);
+                            }
+                            online = true;
+                        }
+                        if (!online) actions(player, getPlugin().getConfig().getStringList("Command.PlayerOffline"));
+                    } else actions(player, noPermission);
                 } else {
-                    String prefix = getPrefix(args[1]);
-                    int level = getLevel(args[1]);
-                    int nextLevel = getNextLevel(args[1]);
-                    int exp = getExp(args[1]);
-                    int maxExp = getMaxExp(args[1]);
-                    int buff = getBuff(args[1]);
-                    for (String msg : LangLoader.getLangFile().getStringList("Resolver.Info"))
-                        SendUtil.message(msg
-                                .replace("<player>", args[1])
-                                .replace("<prefix>", prefix)
-                                .replace("<level>", String.valueOf(level))
-                                .replace("<nextlevel>", String.valueOf(nextLevel))
-                                .replace("<exp>", String.valueOf(exp))
-                                .replace("<maxexp>", String.valueOf(maxExp))
-                                .replace("<buff>", String.valueOf(buff))
-                        );
+                    boolean online = false;
+                    for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                        String name = onlinePlayer.getName();
+                        if (!args[1].equalsIgnoreCase(name)) continue;
+                        Player target = Bukkit.getPlayer(args[1]);
+                        for (String msg : LangLoader.getLangFile().getStringList("Resolver.Info")) {
+                            msg = PlaceholderAPI.setPlaceholders(target, msg);
+                            actions(sender, msg);
+                        }
+                        online = true;
+                    }
+                    if (!online) actions(sender, getPlugin().getConfig().getStringList("Command.PlayerOffline"));
                 }
                 return true;
             }
@@ -173,39 +180,39 @@ public class MainCommand implements TabExecutor {
                 if ("level".equalsIgnoreCase(args[0])) {
                     if (sender instanceof Player) {
                         Player player = (Player) sender;
-                        String name = player.getName();
                         if (player.hasPermission("flameresolveplus.command.level")) {
-                            if ("add".equalsIgnoreCase(args[1])) {
-                                PlayerDataLoader.addLevel(name, args[2]);
-                                for (String msg : LangLoader.add)
-                                    SendUtil.message(player, reName(player, msg).replace("<value>", args[2]), 0);
-                            } else if ("set".equalsIgnoreCase(args[1])) {
-                                PlayerDataLoader.setLevel(name, args[2]);
-                                for (String msg : LangLoader.set)
-                                    SendUtil.message(player, reName(player, msg).replace("<value>", args[2]), 0);
-                            } else if ("del".equalsIgnoreCase(args[1])) {
-                                PlayerDataLoader.delLevel(name, args[2]);
-                                for (String msg : LangLoader.del)
-                                    SendUtil.message(player, reName(player, msg).replace("<value>", args[2]), 0);
-                            } else actions(sender, argsNoEnough);
+                            boolean online = false;
+                            for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                                String name = onlinePlayer.getName();
+                                if (!args[1].equalsIgnoreCase(name)) continue;
+                                if ("add".equalsIgnoreCase(args[1]))
+                                    PlayerDataLoader.addLevel(player, player, args[2]);
+                                else if ("set".equalsIgnoreCase(args[1]))
+                                    PlayerDataLoader.setLevel(player, player, args[2]);
+                                else if ("del".equalsIgnoreCase(args[1]))
+                                    PlayerDataLoader.delLevel(player, player, args[2]);
+                                else actions(player, argsNoEnough);
+                                online = true;
+                            }
+                            if (!online) actions(player, getPlugin().getConfig().getStringList("Command.PlayerOffline"));
                         }
-                        else actions(sender, noPermission);
+                        else actions(player, noPermission);
                         return true;
                     } else {
-                        String name = sender.getName();
-                        if ("add".equalsIgnoreCase(args[1])) {
-                            PlayerDataLoader.addLevel(name, args[2]);
-                            for (String msg : LangLoader.add)
-                                SendUtil.message(msg.replace("<player>", name).replace("<value>", args[2]));
-                        } else if ("set".equalsIgnoreCase(args[1])) {
-                            PlayerDataLoader.setLevel(name, args[2]);
-                            for (String msg : LangLoader.set)
-                                SendUtil.message(msg.replace("<player>", name).replace("<value>", args[2]));
-                        } else if ("del".equalsIgnoreCase(args[1])) {
-                            PlayerDataLoader.delLevel(name, args[2]);
-                            for (String msg : LangLoader.del)
-                                SendUtil.message(msg.replace("<player>", name).replace("<value>", args[2]));
-                        } else actions(sender, argsNoEnough);
+                        boolean online = false;
+                        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                            String name = onlinePlayer.getName();
+                            if (!args[1].equalsIgnoreCase(name)) continue;
+                            if ("add".equalsIgnoreCase(args[1]))
+                                PlayerDataLoader.addLevel(sender, sender, args[2]);
+                            else if ("set".equalsIgnoreCase(args[1]))
+                                PlayerDataLoader.setLevel(sender, sender, args[2]);
+                            else if ("del".equalsIgnoreCase(args[1]))
+                                PlayerDataLoader.delLevel(sender, sender, args[2]);
+                            else actions(sender, argsNoEnough);
+                            online = true;
+                        }
+                        if (!online) actions(sender, getPlugin().getConfig().getStringList("Command.PlayerOffline"));
                     }
                     return true;
                 }
@@ -214,39 +221,39 @@ public class MainCommand implements TabExecutor {
                 if ("exp".equalsIgnoreCase(args[0])) {
                     if (sender instanceof Player) {
                         Player player = (Player) sender;
-                        String name = player.getName();
                         if (player.hasPermission("flameresolveplus.command.exp")) {
-                            if ("add".equalsIgnoreCase(args[1])) {
-                                PlayerDataLoader.addExp(name, args[2]);
-                                for (String msg : LangLoader.add)
-                                    SendUtil.message(player, reName(player, msg).replace("<value>", args[2]), 0);
-                            } else if ("set".equalsIgnoreCase(args[1])) {
-                                PlayerDataLoader.setExp(name, args[2]);
-                                for (String msg : LangLoader.set)
-                                    SendUtil.message(player, reName(player, msg).replace("<value>", args[2]), 0);
-                            } else if ("del".equalsIgnoreCase(args[1])) {
-                                PlayerDataLoader.delExp(name, args[2]);
-                                for (String msg : LangLoader.del)
-                                    SendUtil.message(player, reName(player, msg).replace("<value>", args[2]), 0);
-                            } else actions(sender, argsNoEnough);
+                            boolean online = false;
+                            for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                                String name = onlinePlayer.getName();
+                                if (!args[1].equalsIgnoreCase(name)) continue;
+                                if ("add".equalsIgnoreCase(args[1]))
+                                    PlayerDataLoader.addExp(player, player, args[2]);
+                                else if ("set".equalsIgnoreCase(args[1]))
+                                    PlayerDataLoader.setExp(player, player, args[2]);
+                                else if ("del".equalsIgnoreCase(args[1])) {
+                                    PlayerDataLoader.delExp(player, player, args[2]);
+                                } else actions(player, argsNoEnough);
+                                online = true;
+                            }
+                            if (!online) actions(player, getPlugin().getConfig().getStringList("Command.PlayerOffline"));
                         }
-                        else actions(sender, noPermission);
+                        else actions(player, noPermission);
                         return true;
                     } else {
-                        String name = sender.getName();
-                        if ("add".equalsIgnoreCase(args[1])) {
-                            PlayerDataLoader.addExp(name, args[2]);
-                            for (String msg : LangLoader.add)
-                                SendUtil.message(msg.replace("<player>", name).replace("<value>", args[2]));
-                        } else if ("set".equalsIgnoreCase(args[1])) {
-                            PlayerDataLoader.setExp(name, args[2]);
-                            for (String msg : LangLoader.set)
-                                SendUtil.message(msg.replace("<player>", name).replace("<value>", args[2]));
-                        } else if ("del".equalsIgnoreCase(args[1])) {
-                            PlayerDataLoader.delExp(name, args[2]);
-                            for (String msg : LangLoader.del)
-                                SendUtil.message(msg.replace("<player>", name).replace("<value>", args[2]));
-                        } else actions(sender, argsNoEnough);
+                        boolean online = false;
+                        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                            String name = onlinePlayer.getName();
+                            if (!args[1].equalsIgnoreCase(name)) continue;
+                            if ("add".equalsIgnoreCase(args[1]))
+                                PlayerDataLoader.addExp(sender, sender, args[2]);
+                            else if ("set".equalsIgnoreCase(args[1]))
+                                PlayerDataLoader.setExp(sender, sender, args[2]);
+                            else if ("del".equalsIgnoreCase(args[1])) {
+                                PlayerDataLoader.delExp(sender, sender, args[2]);
+                            } else actions(sender, argsNoEnough);
+                            online = true;
+                        }
+                        if (!online) actions(sender, getPlugin().getConfig().getStringList("Command.PlayerOffline"));
                     }
                     return true;
                 }
@@ -258,36 +265,40 @@ public class MainCommand implements TabExecutor {
                     if (sender instanceof Player) {
                         Player player = (Player) sender;
                         if (player.hasPermission("flameresolveplus.command.level")) {
-                            if ("add".equalsIgnoreCase(args[1])) {
-                                PlayerDataLoader.addLevel(args[3], args[2]);
-                                for (String msg : LangLoader.add)
-                                    SendUtil.message(player, reName(player, msg).replace("<value>", args[2]), 0);
-                            } else if ("set".equalsIgnoreCase(args[1])) {
-                                PlayerDataLoader.setLevel(args[3], args[2]);
-                                for (String msg : LangLoader.set)
-                                    SendUtil.message(player, reName(player, msg).replace("<value>", args[2]), 0);
-                            } else if ("del".equalsIgnoreCase(args[1])) {
-                                PlayerDataLoader.delLevel(args[3], args[2]);
-                                for (String msg : LangLoader.del)
-                                    SendUtil.message(player, reName(player, msg).replace("<value>", args[2]), 0);
-                            } else actions(sender, argsNoEnough);
+                            boolean online = false;
+                            for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                                String name = onlinePlayer.getName();
+                                if (!args[1].equalsIgnoreCase(name)) continue;
+                                Player target = Bukkit.getPlayer(args[3]);
+                                if ("add".equalsIgnoreCase(args[1]))
+                                    PlayerDataLoader.addLevel(player, target, args[2]);
+                                else if ("set".equalsIgnoreCase(args[1]))
+                                    PlayerDataLoader.setLevel(player, target, args[2]);
+                                else if ("del".equalsIgnoreCase(args[1])) {
+                                    PlayerDataLoader.delLevel(player, target, args[2]);
+                                } else actions(player, argsNoEnough);
+                                online = true;
+                            }
+                            if (!online) actions(player, getPlugin().getConfig().getStringList("Command.PlayerOffline"));
                         }
-                        else actions(sender, noPermission);
+                        else actions(player, noPermission);
                         return true;
                     } else {
-                        if ("add".equalsIgnoreCase(args[1])) {
-                            PlayerDataLoader.addLevel(args[3], args[2]);
-                            for (String msg : LangLoader.add)
-                                SendUtil.message(msg.replace("<player>", args[3]).replace("<value>", args[2]));
-                        } else if ("set".equalsIgnoreCase(args[1])) {
-                            PlayerDataLoader.setLevel(args[3], args[2]);
-                            for (String msg : LangLoader.set)
-                                SendUtil.message(msg.replace("<player>", args[3]).replace("<value>", args[2]));
-                        } else if ("del".equalsIgnoreCase(args[1])) {
-                            PlayerDataLoader.delLevel(args[3], args[2]);
-                            for (String msg : LangLoader.del)
-                                SendUtil.message(msg.replace("<player>", args[3]).replace("<value>", args[2]));
-                        } else actions(sender, argsNoEnough);
+                        boolean online = false;
+                        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                            String name = onlinePlayer.getName();
+                            if (!args[1].equalsIgnoreCase(name)) continue;
+                            Player target = Bukkit.getPlayer(args[3]);
+                            if ("add".equalsIgnoreCase(args[1]))
+                                PlayerDataLoader.addLevel(sender, target, args[2]);
+                            else if ("set".equalsIgnoreCase(args[1]))
+                                PlayerDataLoader.setLevel(sender, target, args[2]);
+                            else if ("del".equalsIgnoreCase(args[1])) {
+                                PlayerDataLoader.delLevel(sender, target, args[2]);
+                            } else actions(sender, argsNoEnough);
+                            online = true;
+                        }
+                        if (!online) actions(sender, getPlugin().getConfig().getStringList("Command.PlayerOffline"));
                     }
                     return true;
                 }
@@ -297,36 +308,40 @@ public class MainCommand implements TabExecutor {
                     if (sender instanceof Player) {
                         Player player = (Player) sender;
                         if (player.hasPermission("flameresolveplus.command.exp")) {
-                            if ("add".equalsIgnoreCase(args[1])) {
-                                PlayerDataLoader.addExp(args[3], args[2]);
-                                for (String msg : LangLoader.add)
-                                    SendUtil.message(player, reName(player, msg).replace("<value>", args[2]), 0);
-                            } else if ("set".equalsIgnoreCase(args[1])) {
-                                PlayerDataLoader.setExp(args[3], args[2]);
-                                for (String msg : LangLoader.set)
-                                    SendUtil.message(player, reName(player, msg).replace("<value>", args[2]), 0);
-                            } else if ("del".equalsIgnoreCase(args[1])) {
-                                PlayerDataLoader.delExp(args[3], args[2]);
-                                for (String msg : LangLoader.del)
-                                    SendUtil.message(player, reName(player, msg).replace("<value>", args[2]), 0);
-                            } else actions(sender, argsNoEnough);
+                            boolean online = false;
+                            for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                                String name = onlinePlayer.getName();
+                                if (!args[1].equalsIgnoreCase(name)) continue;
+                                Player target = Bukkit.getPlayer(args[3]);
+                                if ("add".equalsIgnoreCase(args[1]))
+                                    PlayerDataLoader.addExp(player, target, args[2]);
+                                else if ("set".equalsIgnoreCase(args[1]))
+                                    PlayerDataLoader.setExp(player, target, args[2]);
+                                else if ("del".equalsIgnoreCase(args[1])) {
+                                    PlayerDataLoader.delExp(player, target, args[2]);
+                                } else actions(player, argsNoEnough);
+                                online = true;
+                            }
+                            if (!online) actions(player, getPlugin().getConfig().getStringList("Command.PlayerOffline"));
                         }
                         else actions(sender, noPermission);
                         return true;
                     } else {
-                        if ("add".equalsIgnoreCase(args[1])) {
-                            PlayerDataLoader.addExp(args[3], args[2]);
-                            for (String msg : LangLoader.add)
-                                SendUtil.message(msg.replace("<player>", args[3]).replace("<value>", args[2]));
-                        } else if ("set".equalsIgnoreCase(args[1])) {
-                            PlayerDataLoader.setExp(args[3], args[2]);
-                            for (String msg : LangLoader.set)
-                                SendUtil.message(msg.replace("<player>", args[3]).replace("<value>", args[2]));
-                        } else if ("del".equalsIgnoreCase(args[1])) {
-                            PlayerDataLoader.delExp(args[3], args[2]);
-                            for (String msg : LangLoader.del)
-                                SendUtil.message(msg.replace("<player>", args[3]).replace("<value>", args[2]));
-                        } else actions(sender, argsNoEnough);
+                        boolean online = false;
+                        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                            String name = onlinePlayer.getName();
+                            if (!args[1].equalsIgnoreCase(name)) continue;
+                            Player target = Bukkit.getPlayer(args[3]);
+                            if ("add".equalsIgnoreCase(args[1]))
+                                PlayerDataLoader.addExp(sender, target, args[2]);
+                            else if ("set".equalsIgnoreCase(args[1]))
+                                PlayerDataLoader.setExp(sender, target, args[2]);
+                            else if ("del".equalsIgnoreCase(args[1])) {
+                                PlayerDataLoader.delExp(sender, target, args[2]);
+                            } else actions(sender, argsNoEnough);
+                            online = true;
+                        }
+                        if (!online) actions(sender, getPlugin().getConfig().getStringList("Command.PlayerOffline"));
                     }
                     return true;
                 }

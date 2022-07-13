@@ -1,7 +1,7 @@
 package dream.soulflame.flameresolveplus.fileloader;
 
 import dream.soulflame.flamecore.utils.FileUtil;
-import org.bukkit.plugin.Plugin;
+import dream.soulflame.flameresolveplus.FlameResolvePlus;
 
 public class GuiLoader {
 
@@ -17,24 +17,16 @@ public class GuiLoader {
         return guiFile;
     }
 
-    /**
-     *
-     * @param plugin 所需插件
-     */
-    public static void load(Plugin plugin) {
-        guiFile = new FileUtil(plugin, "gui");
+    public static void load() {
+        guiFile = new FileUtil(FlameResolvePlus.getPlugin(), "gui");
     }
 
     public static void loadData() {
         guiTitle = guiFile.getString("Title", "");
     }
 
-    /**
-     *
-     * @param plugin 所需插件
-     */
-    public static void reload(Plugin plugin) {
-        load(plugin);
+    public static void reload() {
+        load();
         loadData();
     }
 

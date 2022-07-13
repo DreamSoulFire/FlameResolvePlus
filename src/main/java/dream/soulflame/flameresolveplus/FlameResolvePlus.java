@@ -29,10 +29,10 @@ public final class FlameResolvePlus extends JavaPlugin {
         plugin = this;
 
         //加载配置文件
-        ConfigLoader.reload(plugin);
-        GuiLoader.reload(plugin);
-        LangLoader.reload(plugin);
-        PlanLoader.reload(plugin);
+        ConfigLoader.reload();
+        GuiLoader.reload();
+        LangLoader.reload();
+        PlanLoader.reload();
 
         //加载papi变量
         PapiHookUtil papiHookUtil = new PapiHookUtil();

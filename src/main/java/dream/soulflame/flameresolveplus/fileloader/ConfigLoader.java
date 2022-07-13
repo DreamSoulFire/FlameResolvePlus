@@ -1,7 +1,7 @@
 package dream.soulflame.flameresolveplus.fileloader;
 
 import dream.soulflame.flamecore.utils.FileUtil;
-import org.bukkit.plugin.Plugin;
+import dream.soulflame.flameresolveplus.FlameResolvePlus;
 
 public class ConfigLoader {
     public static boolean cantPassEnable;
@@ -16,24 +16,16 @@ public class ConfigLoader {
         return configFile;
     }
 
-    /**
-     *
-     * @param plugin 所需插件
-     */
-    public static void load(Plugin plugin) {
-        configFile = new FileUtil(plugin, "config");
+    public static void load() {
+        configFile = new FileUtil(FlameResolvePlus.getPlugin(), "config");
     }
 
     public static void loadData() {
         cantPassEnable = configFile.getBoolean("Message.CantPassConditionMsg.Enable", false);
     }
 
-    /**
-     *
-     * @param plugin 所需插件
-     */
-    public static void reload(Plugin plugin) {
-        load(plugin);
+    public static void reload() {
+        load();
         loadData();
     }
 
