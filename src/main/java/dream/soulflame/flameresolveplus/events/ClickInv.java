@@ -1,5 +1,6 @@
 package dream.soulflame.flameresolveplus.events;
 
+import dream.soulflame.flamecore.utils.ItemUtil;
 import dream.soulflame.flameresolveplus.FlameResolvePlus;
 import dream.soulflame.flameresolveplus.fileloader.PlayerDataLoader;
 import org.bukkit.Material;
@@ -13,8 +14,10 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import static dream.soulflame.flamecore.utils.CommandUtil.commands;
 import static dream.soulflame.flamecore.utils.SendUtil.*;
@@ -28,6 +31,7 @@ import static dream.soulflame.flameresolveplus.fileloader.PlanLoader.*;
 
 public class ClickInv implements Listener {
 
+    public static Set<Integer> showSlot = new HashSet<>();
     private static final Random random = new Random();
     private static final String splitChar = "<->";
 
@@ -47,6 +51,28 @@ public class ClickInv implements Listener {
             return;
         }
         boolean canResolve = false;
+        for (int i = 0;i <= topInventory.getSize() - 1;i++) {
+            ItemStack _item = topInventory.getItem(i);
+            if (_item == null || _item.getType().equals(Material.AIR)) continue;
+            ItemMeta _itemMeta = _item.getItemMeta();
+            if (_itemMeta == null) continue;
+            if (customSet.contains(i) || buttonSet.contains(i)) continue;
+            int _amount = _item.getAmount();
+            showSlot.clear();
+            for (String keys : itemKeys) {
+                ConfigurationSection section = items.getConfigurationSection(keys);
+                showSlot.add(section.getInt("ShowItem.Slot", 0));
+                String showName = section.getString("ShowItem.Name");
+                List<String> showLore = section.getStringList("ShowItem.Lore");
+                String showMaterial = section.getString("ShowItem.Material");
+                ItemStack showItem = ItemUtil.spawnItem(showMaterial, showLore, showName);
+                for (Integer slot : showSlot) {
+                    showItem.setAmount(_amount);
+                    topInventory.setItem(slot, showItem);
+                }
+            }
+        }
+        if (showSlot.contains(rawSlot)) e.setCancelled(true);
         if (buttonSet.contains(rawSlot)) {
             e.setCancelled(true);
             for (int i = 0;i <= topInventory.getSize() - 1;i++) {
@@ -54,7 +80,7 @@ public class ClickInv implements Listener {
                 if (_item == null || _item.getType().equals(Material.AIR)) continue;
                 ItemMeta _itemMeta = _item.getItemMeta();
                 if (_itemMeta == null) continue;
-                if (customSet.contains(i) || buttonSet.contains(i)) continue;
+                if (customSet.contains(i) || buttonSet.contains(i) || showSlot.contains(rawSlot)) continue;
                 int _amount = _item.getAmount();
                 for (String keys : itemKeys) {
                     ConfigurationSection section = items.getConfigurationSection(keys);

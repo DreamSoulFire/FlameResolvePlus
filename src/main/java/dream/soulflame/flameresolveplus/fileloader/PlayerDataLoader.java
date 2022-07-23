@@ -22,7 +22,7 @@ public class PlayerDataLoader {
      * @param sender 需要创建数据的玩家
      */
     public static void createNewData(CommandSender sender) {
-        for (String createMsg : LangLoader.getLangFile().getStringList("Resolver.CreateFile"))
+        if (sender.isOp()) for (String createMsg : LangLoader.getLangFile().getStringList("Resolver.CreateFile"))
             actions(sender, createMsg.replace("<player>", sender.getName()));
         File file = new File(FlameResolvePlus.getPlugin().getDataFolder() + "/PlayerData", sender.getName() + ".yml");
         YamlConfiguration yamlConfiguration = new YamlConfiguration();

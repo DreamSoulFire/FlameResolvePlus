@@ -37,3 +37,18 @@ Example:
   #失败执行指令
   FailCommands:
     - '[op]bc <player> 分解失败了, 大家快来嘲笑他'
+  #物品展示
+  ShowItem:
+    #占据的箱子格子
+    Slot: 37
+    #物品名字
+    Name: '&7分解&e所得:'
+    #lore列表 不想要可以直接删掉
+    Lore:
+      - ''
+      - '&d一次治疗'
+      - '&31 &f点&a经验'
+    #物品材质
+    #材质的数字id或者英文名
+    #物品data用 ':' 分开
+    Material: 'DIAMOND:0'

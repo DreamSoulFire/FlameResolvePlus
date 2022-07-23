@@ -14,6 +14,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import static dream.soulflame.flamecore.utils.SendUtil.reColor;
 import static dream.soulflame.flamecore.utils.SpecialUtil.actions;
+import static dream.soulflame.flameresolveplus.events.ClickInv.showSlot;
 import static dream.soulflame.flameresolveplus.fileloader.ConfigLoader.getConfigFile;
 import static dream.soulflame.flameresolveplus.fileloader.GuiLoader.guiTitle;
 import static dream.soulflame.flameresolveplus.fileloader.LangLoader.getLangFile;
@@ -47,7 +48,7 @@ public class OpenAndCloseInv implements Listener {
             if (_item == null || _item.getType().equals(Material.AIR)) continue;
             ItemMeta _itemMeta = _item.getItemMeta();
             if (_itemMeta == null) continue;
-            if (customSet.contains(i) || buttonSet.contains(i)) continue;
+            if (customSet.contains(i) || buttonSet.contains(i) || showSlot.contains(i)) continue;
             player.getInventory().addItem(_item);
             have = true;
         }
